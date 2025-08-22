@@ -67,7 +67,7 @@ export function PendingDoctors({ doctors }) {
     <div>
       <Card className="bg-muted/20 border-emerald-900/20">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-white">
+          <CardTitle className="text-xl font-bold text-stone-900">
             Pending Doctor Verifications
           </CardTitle>
           <CardDescription>
@@ -93,7 +93,7 @@ export function PendingDoctors({ doctors }) {
                           <User className="h-5 w-5 text-emerald-400" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-white">
+                          <h3 className="font-medium text-blue-900">
                             {doctor.name}
                           </h3>
                           <p className="text-sm text-muted-foreground">
@@ -132,7 +132,7 @@ export function PendingDoctors({ doctors }) {
         <Dialog open={!!selectedDoctor} onOpenChange={handleCloseDialog}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-white">
+              <DialogTitle className="text-xl font-bold text-stone-900">
                 Doctor Verification Details
               </DialogTitle>
               <DialogDescription>
@@ -148,7 +148,7 @@ export function PendingDoctors({ doctors }) {
                   <h4 className="text-sm font-medium text-muted-foreground">
                     Full Name
                   </h4>
-                  <p className="text-base font-medium text-white">
+                  <p className="text-base font-medium text-blue-900">
                     {selectedDoctor.name}
                   </p>
                 </div>
@@ -156,7 +156,7 @@ export function PendingDoctors({ doctors }) {
                   <h4 className="text-sm font-medium text-muted-foreground">
                     Email
                   </h4>
-                  <p className="text-base font-medium text-white">
+                  <p className="text-base font-medium text-blue-900">
                     {selectedDoctor.email}
                   </p>
                 </div>
@@ -164,7 +164,7 @@ export function PendingDoctors({ doctors }) {
                   <h4 className="text-sm font-medium text-muted-foreground">
                     Application Date
                   </h4>
-                  <p className="text-base font-medium text-white">
+                  <p className="text-base font-medium text-blue-900">
                     {format(new Date(selectedDoctor.createdAt), "PPP")}
                   </p>
                 </div>
@@ -176,7 +176,7 @@ export function PendingDoctors({ doctors }) {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Medal className="h-5 w-5 text-emerald-400" />
-                  <h3 className="text-white font-medium">
+                  <h3 className="text-stone-900 font-medium">
                     Professional Information
                   </h3>
                 </div>
@@ -186,14 +186,14 @@ export function PendingDoctors({ doctors }) {
                     <h4 className="text-sm font-medium text-muted-foreground">
                       Specialty
                     </h4>
-                    <p className="text-white">{selectedDoctor.specialty}</p>
+                    <p className="text-blue-900">{selectedDoctor.specialty}</p>
                   </div>
 
                   <div className="space-y-1">
                     <h4 className="text-sm font-medium text-muted-foreground">
                       Years of Experience
                     </h4>
-                    <p className="text-white">
+                    <p className="text-blue-900">
                       {selectedDoctor.experience} years
                     </p>
                   </div>
@@ -223,17 +223,17 @@ export function PendingDoctors({ doctors }) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-emerald-400" />
-                  <h3 className="text-white font-medium">
+                  <h3 className="text-stone-900 font-medium">
                     Service Description
                   </h3>
                 </div>
-                <p className="text-muted-foreground whitespace-pre-line">
+                <p className="text-muted-foreground blue-space-pre-line">
                   {selectedDoctor.description}
                 </p>
               </div>
             </div>
 
-            {loading && <BarLoader width={"100%"} color="#36d7b7" />}
+            {loading && <BarLoader width={"100%"} color="#df390bff" />}
 
             <DialogFooter className="flex sm:justify-between">
               <Button
