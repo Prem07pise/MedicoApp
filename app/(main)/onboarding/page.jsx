@@ -150,7 +150,7 @@ export default function OnboardingPage() {
   // Doctor registration form
   if (step === "doctor-form") {
     return (
-      <Card className="bg-gradient-to-r from-cyan-100 to-indigo-100 text-white border border-gray-700 p-6 pr-8">
+      <Card className="bg-gradient-to-r from-cyan-100 to-indigo-100 text-stone-900 border border-gray-700 p-6 pr-8">
         <CardContent className="pt-6">
           <div className="mb-6">
             <CardTitle className="text-2xl font-bold text-black mb-2">
