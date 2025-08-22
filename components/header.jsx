@@ -63,7 +63,7 @@ const Header = async () => {
               <>
                 <Link href="/checker">
                   <Button
-                  variant="outline"
+                    variant="outline"
                     className="hidden md:inline-flex items-center gap-2"
                   >
                     <Stethoscope className="h-4 w-4" />
