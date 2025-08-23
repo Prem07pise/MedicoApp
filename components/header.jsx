@@ -61,6 +61,17 @@ const Header = async () => {
             {/* Patient Links */}
             {user?.role === "PATIENT" && (
               <>
+
+              <Link href="http://localhost:5173">
+              <Button variant="outline" className="hidden md:inline-flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Chatbot
+              </Button>
+              <Button variant="ghost" className="md:hidden w-10 h-10 p-0">
+                <User className="h-4 w-4" />
+              </Button>
+            </Link>
+
                 <Link href="/checker">
                   <Button
                     variant="outline"
