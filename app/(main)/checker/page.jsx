@@ -3,6 +3,81 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+const specialtyMapping = {
+  'Respiratory': ['Pulmonologist', 'ENT Specialist'],
+  'Cardiovascular': ['Cardiologist'],
+  'Digestive': ['Gastroenterologist'],
+  'Neurological': ['Neurologist'],
+  'Skin': ['Dermatologist'],
+  'Joint/Muscle': ['Orthopedist', 'Rheumatologist'],
+  'Mental Health': ['Psychiatrist', 'Psychologist'],
+  'General': ['General Physician', 'Internal Medicine Specialist']
+};
+
+const doctorsList = {
+  'Pulmonologist': [
+    { name: 'Dr. Sarah Chen', experience: '15 years', rating: 4.8 },
+    { name: 'Dr. Michael Roberts', experience: '12 years', rating: 4.9 }
+  ],
+  'Cardiologist': [
+    { name: 'Dr. James Wilson', experience: '20 years', rating: 4.9 },
+    { name: 'Dr. Emily Rodriguez', experience: '18 years', rating: 4.7 }
+  ],
+  'Gastroenterologist': [
+    { name: 'Dr. David Kim', experience: '14 years', rating: 4.8 },
+    { name: 'Dr. Lisa Patel', experience: '16 years', rating: 4.9 }
+  ],
+  'Neurologist': [
+    { name: 'Dr. Robert Brown', experience: '22 years', rating: 4.9 },
+    { name: 'Dr. Maria Garcia', experience: '17 years', rating: 4.8 }
+  ],
+  'Dermatologist': [
+    { name: 'Dr. Jennifer Lee', experience: '13 years', rating: 4.7 },
+    { name: 'Dr. Thomas Anderson', experience: '19 years', rating: 4.8 }
+  ],
+  'General Physician': [
+    { name: 'Dr. William Taylor', experience: '10 years', rating: 4.6 },
+    { name: 'Dr. Susan Martinez', experience: '15 years', rating: 4.7 }
+  ]
+};
+
+const getRecommendedDoctors = (conditions) => {
+  const recommendedSpecialties = new Set();
+  const recommendedDoctors = [];
+
+  conditions.forEach(condition => {
+    let specialty = 'General';
+    // Map conditions to specialties based on keywords
+    if (condition.name.toLowerCase().includes('respiratory') || 
+        condition.name.toLowerCase().includes('breathing')) {
+      specialty = 'Respiratory';
+    } else if (condition.name.toLowerCase().includes('heart')) {
+      specialty = 'Cardiovascular';
+    } else if (condition.name.toLowerCase().includes('skin')) {
+      specialty = 'Skin';
+    } else if (condition.name.toLowerCase().includes('stomach') || 
+               condition.name.toLowerCase().includes('digestive')) {
+      specialty = 'Digestive';
+    } else if (condition.name.toLowerCase().includes('brain') || 
+               condition.name.toLowerCase().includes('neural')) {
+      specialty = 'Neurological';
+    }
+
+    specialtyMapping[specialty]?.forEach(spec => {
+      if (doctorsList[spec]) {
+        recommendedSpecialties.add(spec);
+        doctorsList[spec].forEach(doctor => {
+          if (!recommendedDoctors.some(d => d.name === doctor.name)) {
+            recommendedDoctors.push(doctor);
+          }
+        });
+      }
+    });
+  });
+
+  return recommendedDoctors;
+};
+
 export default function SymptomChecker() {
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
   const [results, setResults] = useState(null);
@@ -242,6 +317,30 @@ export default function SymptomChecker() {
                       <p className="text-sm text-gray-800 mt-2 font-semibold">Recommendation: <span className="font-normal">{condition.recommendation}</span></p>
                     </div>
                   ))}
+                  <div className="mt-6">
+                    <h3 className="text-xl font-bold text-blue-700 mb-4">Recommended Specialists</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {getRecommendedDoctors(results.conditions).map((doctor, idx) => (
+                        <div key={idx} className="bg-white rounded-xl shadow-md p-4 border border-blue-100">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-800">{doctor.name}</h4>
+                              <p className="text-sm text-gray-600">Experience: {doctor.experience}</p>
+                              <div className="flex items-center mt-1">
+                                <span className="text-yellow-500">★</span>
+                                <span className="text-sm text-gray-600 ml-1">{doctor.rating}/5.0</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-xl px-4 py-3 mt-4 text-xs text-yellow-800 shadow-sm font-semibold">
                     <strong>⚠️ Important Disclaimer:</strong>
                     <p className='mt-1'>{results.disclaimer}</p>
