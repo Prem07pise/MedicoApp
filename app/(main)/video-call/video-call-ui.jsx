@@ -206,7 +206,7 @@ export default function VideoCall({ sessionId, token }) {
         }}
       />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 mt-12">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-stone-900 mb-2">
             Video Consultation

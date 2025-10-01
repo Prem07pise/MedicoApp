@@ -8,46 +8,19 @@ export default function SymptomChecker() {
   const [results, setResults] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [dropdown, setDropdown] = useState(false);
 
   const symptoms = [
     'Fever', 'Headache', 'Cough', 'Sore throat', 'Runny nose', 'Fatigue',
     'Body aches', 'Nausea', 'Vomiting', 'Diarrhea', 'Shortness of breath',
     'Chest pain', 'Dizziness', 'Skin rash', 'Joint pain', 'Loss of appetite',
-    'Chills', 'Sweating', 'Abdominal pain', 'Back pain'
-  ];
-
-  const conditions = [
-    {
-      name: 'Common Cold',
-      symptoms: ['Runny nose', 'Sore throat', 'Cough', 'Headache', 'Fatigue'],
-      severity: 'Mild',
-      color: 'border-green-400'
-    },
-    {
-      name: 'Flu',
-      symptoms: ['Fever', 'Body aches', 'Fatigue', 'Headache', 'Cough', 'Chills'],
-      severity: 'Moderate',
-      color: 'border-yellow-400'
-    },
-    {
-      name: 'Food Poisoning',
-      symptoms: ['Nausea', 'Vomiting', 'Diarrhea', 'Abdominal pain', 'Fever'],
-      severity: 'Moderate',
-      color: 'border-yellow-400'
-    },
-    {
-      name: 'Migraine',
-      symptoms: ['Headache', 'Nausea', 'Dizziness', 'Fatigue'],
-      severity: 'Moderate',
-      color: 'border-yellow-400'
-    },
-    {
-      name: 'Possible Serious Condition',
-      symptoms: ['Chest pain', 'Shortness of breath'],
-      severity: 'Severe',
-      color: 'border-red-400'
-    }
+    'Chills', 'Sweating', 'Abdominal pain', 'Back pain', 'Blurred vision',
+    'Confusion', 'Difficulty swallowing', 'Ear pain', 'Eye redness',
+    'Frequent urination', 'Hair loss', 'Hearing loss', 'Heart palpitations',
+    'Irritability', 'Loss of smell', 'Loss of taste', 'Muscle weakness',
+    'Numbness or tingling', 'Seizures', 'Stiff neck', 'Swelling',
+    'Unexplained weight loss', 'Wheezing', 'Yellow skin or eyes (jaundice)'
   ];
 
   const {
@@ -81,34 +54,40 @@ export default function SymptomChecker() {
     setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptom));
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (selectedSymptoms.length === 0) return;
     setLoading(true);
-    setTimeout(() => {
-      const matchedConditions = conditions.map(condition => {
-        const matches = condition.symptoms.filter(symptom =>
-          selectedSymptoms.includes(symptom)
-        ).length;
-        const percentage = Math.round((matches / condition.symptoms.length) * 100);
+    setError(null);
 
-        return {
-          ...condition,
-          matchCount: matches,
-          percentage: percentage
-        };
-      }).filter(condition => condition.matchCount > 0)
-        .sort((a, b) => b.percentage - a.percentage);
+    try {
+      const response = await fetch('/api/diagnose', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symptoms: selectedSymptoms, age: data.age }),
+      });
 
-      setResults(matchedConditions);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
+      }
+
+      const resultData = await response.json();
+      setResults(resultData);
       setShowResults(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   const resetAll = () => {
     setSelectedSymptoms([]);
     setResults(null);
     setShowResults(false);
+    setError(null);
     formReset();
   };
 
@@ -117,12 +96,12 @@ export default function SymptomChecker() {
       {/* Decorative blurred circles */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-blue-300 rounded-full opacity-30 blur-3xl -z-10 animate-pulse-slow"></div>
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-pink-300 rounded-full opacity-30 blur-3xl -z-10 animate-pulse-slow"></div>
-      <div className="w-full max-w-lg bg-white/90 rounded-3xl shadow-2xl px-8 py-10 animate-fade-in border border-blue-100 backdrop-blur-md">
+      <div className="w-full max-w-3xl bg-white/90 rounded-3xl shadow-2xl px-8 py-10 animate-fade-in border border-blue-100 backdrop-blur-md mt-12">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-500 to-pink-500 text-center mb-2 tracking-tight drop-shadow-lg">
-          🩺 Symptom Checker
+          🩺 AI Symptom Analyzer
         </h1>
         <p className="text-center text-gray-700 mb-7 text-lg">
-          Get quick insights into possible conditions based on your symptoms.<br />
+          Get AI-powered insights into possible conditions based on your symptoms.<br />
           <span className="block text-sm text-red-500 mt-1 font-semibold">
             (This tool does not replace professional medical advice.)
           </span>
@@ -195,6 +174,12 @@ export default function SymptomChecker() {
                   </div>
                 </div>
               )}
+              {error && (
+                <div className="bg-red-50 border-l-4 border-red-400 rounded-xl px-4 py-3 text-sm text-red-700 shadow font-semibold">
+                  <p><strong>Error:</strong> {error}</p>
+                  <p>Please ensure your GEMINI_API_KEY is set up correctly in your environment variables.</p>
+                </div>
+              )}
               <div className="flex gap-3 mt-4">
                 <button
                   type="submit"
@@ -233,7 +218,7 @@ export default function SymptomChecker() {
           ) : (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-blue-700">Possible Conditions</h2>
+                <h2 className="text-xl font-bold text-blue-700">AI-Powered Analysis</h2>
                 <button
                   type="button"
                   className="text-sm text-pink-600 hover:underline font-semibold"
@@ -242,25 +227,24 @@ export default function SymptomChecker() {
                   Start Over
                 </button>
               </div>
-              {results && results.length > 0 ? (
+              {results && results.conditions && results.conditions.length > 0 ? (
                 <div className="space-y-4">
-                  {results.map((condition, idx) => (
+                  {results.conditions.map((condition, idx) => (
                     <div
                       key={idx}
-                      className={`border-l-4 ${condition.color} bg-white rounded-xl shadow px-4 py-3 animate-fade-in`}
+                      className={`border-l-4 border-blue-400 bg-white rounded-xl shadow px-4 py-3 animate-fade-in`}
                     >
                       <h3 className="font-semibold text-gray-800 flex items-center gap-2">
                         <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg>
-                        {condition.name} <span className="text-xs text-gray-500">({condition.percentage}% match)</span>
+                        {condition.name} <span className="text-xs text-gray-500">({condition.confidence} confidence)</span>
                       </h3>
-                      <p className="text-sm text-gray-600">Severity: <span className="font-medium">{condition.severity}</span></p>
-                      <p className="text-xs text-gray-500">
-                        Matched symptoms: {condition.matchCount} of {condition.symptoms.length}
-                      </p>
+                      <p className="text-sm text-gray-600 mt-1">{condition.explanation}</p>
+                      <p className="text-sm text-gray-800 mt-2 font-semibold">Recommendation: <span className="font-normal">{condition.recommendation}</span></p>
                     </div>
                   ))}
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-xl px-4 py-3 mt-4 text-xs text-yellow-800 shadow-sm font-semibold">
                     <strong>⚠️ Important Disclaimer:</strong>
+                    <p className='mt-1'>{results.disclaimer}</p>
                     <ul className="list-disc ml-5 mt-1 space-y-1">
                       <li>This is not a medical diagnosis.</li>
                       <li>Always consult a healthcare professional for proper evaluation.</li>
